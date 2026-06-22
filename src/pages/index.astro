@@ -63,7 +63,7 @@ posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
       <div class="posts">
         {posts.map((post) => (
           <article>
-            <a href={"/frenchiepedia/posts/" + post.slug + "/"}>
+            <a href={"/frenchiepedia/posts/" + post.id.replace(/.md$/, "") + "/"}>
               <h3>{post.data.title}</h3>
               <p>{post.data.description}</p>
               <span class="read-more">Read more →</span>
@@ -80,4 +80,5 @@ posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
   <FrenchMascot />
 </body>
 </html>
+
 
