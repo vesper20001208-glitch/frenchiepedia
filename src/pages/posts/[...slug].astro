@@ -1,0 +1,56 @@
+---
+import { getCollection, getEntry } from "astro:content";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("posts");
+  return posts.map((post) => ({
+    params: { slug: post.id.replace(/.md$/, "") },
+  }));
+}
+
+const { slug } = Astro.params;
+const post = await getEntry("posts", slug + ".md");
+if (!post) return Astro.redirect("/frenchiepedia/404");
+const { Content } = await post.render();
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{post.data.title} | FrenchiePedia</title>
+  <meta name="description" content={post.data.description} />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href={"https://vesper20001208-glitch.github.io/frenchiepedia/posts/" + slug + "/"} />
+  <meta property="og:title" content={post.data.title} />
+  <meta property="og:description" content={post.data.description} />
+  <meta property="og:type" content="article" />
+  <style>
+    :root { --bg: #faf9f6; --fg: #1a1a2e; --accent: #c8a45c; --gray: #6b7280; --light-gray: #e5e7eb; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--fg); line-height: 1.7; font-size: 18px; }
+    .container { max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .back { display: inline-block; color: var(--accent); text-decoration: none; margin-bottom: 2rem; font-size: 0.95rem; }
+    .back:hover { text-decoration: underline; }
+    h1 { font-size: 2rem; margin-bottom: 1rem; letter-spacing: -0.01em; line-height: 1.3; }
+    h2 { font-size: 1.5rem; margin: 2rem 0 0.8rem; }
+    h3 { font-size: 1.2rem; margin: 1.5rem 0 0.5rem; }
+    p { margin-bottom: 1.2rem; }
+    ul, ol { margin-bottom: 1.2rem; padding-left: 1.5rem; }
+    strong { color: #1a1a2e; }
+    footer { text-align: center; padding: 2rem; color: var(--gray); font-size: 0.85rem; border-top: 1px solid var(--light-gray); margin-top: 3rem; }
+    @media (max-width: 640px) { body { font-size: 16px; } .container { padding: 1.5rem 1rem; } h1 { font-size: 1.5rem; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a class="back" href="/frenchiepedia/">← Back to FrenchiePedia</a>
+    <h1>{post.data.title}</h1>
+    <Content />
+  </div>
+  <footer>
+    <p>FrenchiePedia &copy; 2026 &mdash; French Bulldog Care Guide</p>
+  </footer>
+</body>
+</html>

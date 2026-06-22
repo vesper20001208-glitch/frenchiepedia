@@ -1,0 +1,80 @@
+---
+import { getCollection } from "astro:content";
+const posts = await getCollection("posts");
+posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FrenchiePedia - The Ultimate French Bulldog Care Guide</title>
+  <meta name="description" content="The ultimate guide to French Bulldog care. Expert advice on health, nutrition, training, grooming, and accessories for your Frenchie." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://vesper20001208-glitch.github.io/frenchiepedia/" />
+  <meta property="og:title" content="FrenchiePedia - French Bulldog Care Guide" />
+  <meta property="og:description" content="The ultimate guide to French Bulldog care." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" type="image/svg+xml" href="/frenchiepedia/favicon.svg" />
+  <style>
+    :root { --bg: #faf9f6; --fg: #1a1a2e; --accent: #c8a45c; --accent-light: #e8d5a3; --gray: #6b7280; --light-gray: #e5e7eb; --card-bg: #ffffff; --max-width: 800px; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--fg); line-height: 1.7; font-size: 18px; }
+    header { background: linear-gradient(135deg, #1a1a2e, #16213e); color: white; padding: 3rem 1.5rem; text-align: center; }
+    header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+    header p { color: var(--accent-light); font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+    nav { margin-top: 1.5rem; display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; }
+    nav a { color: var(--accent); text-decoration: none; }
+    nav a:hover { color: white; }
+    main { max-width: var(--max-width); margin: 0 auto; padding: 2rem 1.5rem; }
+    .intro { margin-bottom: 3rem; }
+    .intro h2 { font-size: 1.8rem; margin-bottom: 1rem; color: #1a1a2e; }
+    .intro p { color: var(--gray); font-size: 1.05rem; line-height: 1.8; }
+    .section-title { font-size: 1.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--accent); }
+    .posts { display: grid; gap: 1.5rem; }
+    article { background: var(--card-bg); border-radius: 8px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.08); transition: transform 0.2s, box-shadow 0.2s; }
+    article:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    article a { text-decoration: none; color: inherit; }
+    article h3 { font-size: 1.2rem; margin-bottom: 0.5rem; color: #1a1a2e; }
+    article p { color: var(--gray); font-size: 0.95rem; line-height: 1.6; }
+    .read-more { color: var(--accent); font-size: 0.85rem; margin-top: 0.5rem; display: inline-block; font-weight: 600; }
+    footer { text-align: center; padding: 2rem 1.5rem; color: var(--gray); font-size: 0.85rem; border-top: 1px solid var(--light-gray); margin-top: 3rem; }
+    @media (max-width: 640px) { body { font-size: 16px; } header { padding: 2rem 1rem; } header h1 { font-size: 1.8rem; } main { padding: 1.5rem 1rem; } }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>FrenchiePedia</h1>
+    <p>Your complete guide to French Bulldog care, health, nutrition, training, and everything in between.</p>
+    <nav>
+      <a href="/frenchiepedia/">Home</a>
+    </nav>
+  </header>
+  <main>
+    <section class="intro">
+      <h2>Welcome to FrenchiePedia</h2>
+      <p>French Bulldogs are the most popular dog breed in America for a reason. They are affectionate, playful, and make wonderful companions. But they also come with unique needs. FrenchiePedia is here to help you give your Frenchie the best life possible.</p>
+    </section>
+    <section>
+      <h2 class="section-title">Latest Articles</h2>
+      <div class="posts">
+        {posts.map((post) => (
+          <article>
+            <a href={"/frenchiepedia/posts/" + post.slug + "/"}>
+              <h3>{post.data.title}</h3>
+              <p>{post.data.description}</p>
+              <span class="read-more">Read more →</span>
+            </a>
+          </article>
+        ))}
+      </div>
+    </section>
+  </main>
+  <footer>
+    <p>FrenchiePedia &copy; 2026 &mdash; The French Bulldog Care Guide</p>
+    <p style="margin-top: 0.5rem; font-size: 0.8rem;">We are a participant in the Amazon Services LLC Associates Program.</p>
+  </footer>
+</body>
+</html>

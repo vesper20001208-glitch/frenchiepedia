@@ -1,0 +1,105 @@
+﻿---
+export interface Props {
+  title: string;
+  description: string;
+  image?: string;
+}
+
+const { title, description, image } = Astro.props;
+const siteTitle = "FrenchiePedia - The Ultimate French Bulldog Care Guide";
+const siteUrl = "https://vesper20001208-glitch.github.io/frenchiepedia";
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title ? title + " | FrenchiePedia" : siteTitle}</title>
+  <meta name="description" content={description} />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href={siteUrl + Astro.url.pathname} />
+  <meta property="og:title" content={title || siteTitle} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={siteUrl + Astro.url.pathname} />
+  <meta property="og:type" content="website" />
+  {image && <meta property="og:image" content={image} />}
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title || siteTitle} />
+  <meta name="twitter:description" content={description} />
+  <link rel="icon" type="image/svg+xml" href="/frenchiepedia/favicon.svg" />
+  <style>
+    :root {
+      --bg: #faf9f6;
+      --fg: #1a1a2e;
+      --accent: #c8a45c;
+      --accent-light: #e8d5a3;
+      --gray: #6b7280;
+      --light-gray: #e5e7eb;
+      --card-bg: #ffffff;
+      --max-width: 800px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      line-height: 1.7;
+      font-size: 18px;
+    }
+    header {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: white;
+      padding: 3rem 1.5rem;
+      text-align: center;
+    }
+    header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+    header h1 a { color: white; text-decoration: none; }
+    header p { color: var(--accent-light); font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+    nav {
+      margin-top: 1.5rem;
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    nav a { color: var(--accent); text-decoration: none; font-size: 1rem; transition: color 0.2s; }
+    nav a:hover { color: white; }
+    main { max-width: var(--max-width); margin: 0 auto; padding: 2rem 1.5rem; }
+    footer {
+      text-align: center;
+      padding: 2rem 1.5rem;
+      color: var(--gray);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--light-gray);
+      margin-top: 3rem;
+    }
+    @media (max-width: 640px) {
+      body { font-size: 16px; }
+      header { padding: 2rem 1rem; }
+      header h1 { font-size: 1.8rem; }
+      main { padding: 1.5rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1><a href="/frenchiepedia/">FrenchiePedia</a></h1>
+    <p>Your complete guide to French Bulldog care, health, nutrition, training, and everything in between.</p>
+    <nav>
+      <a href="/frenchiepedia/">Home</a>
+      <a href="/frenchiepedia/health">Health</a>
+      <a href="/frenchiepedia/food">Food & Nutrition</a>
+      <a href="/frenchiepedia/training">Training</a>
+      <a href="/frenchiepedia/accessories">Accessories</a>
+    </nav>
+  </header>
+  <main>
+    <slot />
+  </main>
+  <footer>
+    <p>FrenchiePedia &copy; {new Date().getFullYear()} &mdash; The French Bulldog Care Guide</p>
+    <p style="margin-top: 0.5rem; font-size: 0.8rem;">We are a participant in the Amazon Services LLC Associates Program.</p>
+  </footer>
+</body>
+</html>
