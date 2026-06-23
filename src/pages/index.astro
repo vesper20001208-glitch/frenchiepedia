@@ -167,7 +167,7 @@ const categories = [
     <!-- Categories -->
     <div class="categories">
       {categories.map((cat) => (
-        <a href={"/frenchiepedia/" + (cat.slug === "lifestyle" ? "" : cat.slug)} class="cat-card">
+        <a href="/frenchiepedia/#articles" class="cat-card">
           <div class="cat-icon">{cat.icon}</div>
           <h3>{cat.name}</h3>
           <p>{cat.desc}</p>
@@ -230,3 +230,5 @@ const categories = [
   </script>
 </body>
 </html>
+
+
