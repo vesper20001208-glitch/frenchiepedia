@@ -1,0 +1,36 @@
+﻿name: Daily Content Generator
+
+on:
+  schedule:
+    # Run every day at 2:00 AM UTC (10:00 AM Beijing time)
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+    # Allow manual trigger too
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Generate daily article
+        run: node scripts/generate-daily-article.js
+
+      - name: Commit and push
+        run: |
+          git config --global user.name "FrenchiePedia Bot"
+          git config --global user.email "bot@frenchiepedia.com"
+          git add src/content/posts/ .daily-index.json
+          if git diff --staged --quiet; then
+            echo "No new article generated today - all topics used"
+          else
+            git commit -m "Daily article update $(date +%Y-%m-%d)"
+            git push
+          fi
