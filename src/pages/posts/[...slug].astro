@@ -12,6 +12,17 @@ const { slug } = Astro.params;
 const post = await getEntry("posts", slug);
 if (!post) return Astro.redirect("/frenchiepedia/404");
 const { Content } = await render(post);
+const siteUrl = "https://vesper20001208-glitch.github.io/frenchiepedia";
+const readingTime = Math.ceil((post.body || "").split(/\s+/).length / 200) || 3;
+const tag = slug.includes("health") ? "Health" :
+            slug.includes("food") ? "Nutrition" :
+            slug.includes("train") ? "Training" :
+            slug.includes("groom") ? "Grooming" :
+            slug.includes("price") ? "Cost" :
+            slug.includes("name") ? "Lifestyle" :
+            slug.includes("temperament") ? "Behavior" :
+            slug.includes("lifespan") ? "Health" :
+            slug.includes("adoption") ? "Lifestyle" : "Care";
 ---
 
 <!DOCTYPE html>
@@ -25,34 +36,137 @@ const { Content } = await render(post);
   <link rel="canonical" href={"https://vesper20001208-glitch.github.io/frenchiepedia/posts/" + slug + "/"} />
   <meta property="og:title" content={post.data.title} />
   <meta property="og:description" content={post.data.description} />
+  <meta property="og:url" content={siteUrl + "/posts/" + slug + "/"} />
   <meta property="og:type" content="article" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" type="image/svg+xml" href="/frenchiepedia/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
   <style>
-    :root { --bg: #faf9f6; --fg: #1a1a2e; --accent: #c8a45c; --gray: #6b7280; --light-gray: #e5e7eb; }
+    :root {
+      --bg: #faf9f6; --fg: #1a1a2e; --accent: #c8a45c; --accent-dark: #a8863a;
+      --accent-light: #f0e6c8; --gray-100: #f3f4f6; --gray-200: #e5e7eb;
+      --gray-300: #d1d5db; --gray-400: #9ca3af; --gray-500: #6b7280; --gray-600: #4b5563;
+      --content-width: 740px; --radius-sm: 8px; --radius-md: 12px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06); --shadow-md: 0 4px 16px rgba(0,0,0,0.1);
+      --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--fg); line-height: 1.7; font-size: 18px; }
-    .container { max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem; }
-    .back { display: inline-block; color: var(--accent); text-decoration: none; margin-bottom: 2rem; font-size: 0.95rem; }
-    .back:hover { text-decoration: underline; }
-    h1 { font-size: 2rem; margin-bottom: 1rem; letter-spacing: -0.01em; line-height: 1.3; }
-    h2 { font-size: 1.5rem; margin: 2rem 0 0.8rem; }
-    h3 { font-size: 1.2rem; margin: 1.5rem 0 0.5rem; }
-    p { margin-bottom: 1.2rem; }
-    ul, ol { margin-bottom: 1.2rem; padding-left: 1.5rem; }
-    li { margin-bottom: 0.3rem; }
-    strong { color: #1a1a2e; }
-    table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
-    th, td { border: 1px solid #e5e7eb; padding: 0.5rem; text-align: left; font-size: 0.95rem; }
-    th { background: #f3f4f6; font-weight: 600; }
-    footer { text-align: center; padding: 2rem; color: var(--gray); font-size: 0.85rem; border-top: 1px solid var(--light-gray); margin-top: 3rem; }
-    @media (max-width: 640px) { body { font-size: 16px; } .container { padding: 1.5rem 1rem; } h1 { font-size: 1.5rem; } }
+    body { font-family: "Inter", system-ui, sans-serif; background: var(--bg); color: var(--fg); line-height: 1.7; font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+    /* Article header */
+    .article-header {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      padding: 3rem 1.5rem 2.5rem;
+      text-align: center;
+    }
+    .article-header-inner { max-width: var(--content-width); margin: 0 auto; }
+    .back-link {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      color: rgba(255,255,255,0.5); text-decoration: none;
+      font-size: 0.85rem; margin-bottom: 1.5rem; transition: color var(--transition);
+    }
+    .back-link:hover { color: var(--accent); }
+    .article-tag {
+      display: inline-block;
+      background: rgba(200,164,92,0.15); color: var(--accent-light);
+      padding: 0.25rem 0.8rem; border-radius: 100px;
+      font-size: 0.75rem; font-weight: 600; margin-bottom: 1rem;
+    }
+    .article-header h1 {
+      font-family: "Playfair Display", serif;
+      font-size: 2.2rem; font-weight: 700; color: white;
+      line-height: 1.2; letter-spacing: -0.01em;
+    }
+    .article-meta {
+      color: rgba(255,255,255,0.5); font-size: 0.85rem;
+      margin-top: 1rem; display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;
+    }
+
+    /* Article body */
+    .article-body { max-width: var(--content-width); margin: 0 auto; padding: 2.5rem 1.5rem 3rem; }
+    .article-body h2 { font-size: 1.5rem; font-weight: 700; margin: 2.5rem 0 1rem; letter-spacing: -0.01em; line-height: 1.3; }
+    .article-body h2:first-child { margin-top: 0; }
+    .article-body h3 { font-size: 1.2rem; font-weight: 600; margin: 2rem 0 0.8rem; }
+    .article-body p { margin-bottom: 1.2rem; color: var(--gray-600); }
+    .article-body strong { color: var(--fg); font-weight: 600; }
+    .article-body ul, .article-body ol { margin-bottom: 1.2rem; padding-left: 1.5rem; color: var(--gray-600); }
+    .article-body li { margin-bottom: 0.3rem; }
+    .article-body table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.9rem; }
+    .article-body th, .article-body td { border: 1px solid var(--gray-200); padding: 0.6rem 0.8rem; text-align: left; }
+    .article-body th { background: var(--gray-100); font-weight: 600; color: var(--fg); }
+    .article-body td { color: var(--gray-600); }
+    .article-body hr { border: none; height: 1px; background: var(--gray-200); margin: 2rem 0; }
+
+    /* Blockquote-style highlight */
+    .article-body p:has(strong:only-child) { padding: 1rem 1.25rem; background: var(--accent-light); border-radius: var(--radius-sm); border-left: 4px solid var(--accent); font-weight: 500; color: var(--fg); }
+
+    /* Navigation */
+    .article-nav { max-width: var(--content-width); margin: 0 auto; padding: 0 1.5rem 2rem; display: flex; justify-content: space-between; gap: 1rem; }
+    .article-nav a { color: var(--accent-dark); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color var(--transition); }
+    .article-nav a:hover { color: var(--accent); }
+
+    /* Author box */
+    .author-box {
+      max-width: var(--content-width); margin: 0 auto; padding: 1.5rem;
+      background: var(--card-bg); border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm); border: 1px solid var(--gray-200);
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .author-avatar {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; flex-shrink: 0;
+    }
+    .author-info h4 { font-size: 0.9rem; font-weight: 600; }
+    .author-info p { font-size: 0.82rem; color: var(--gray-500); line-height: 1.4; }
+
+    footer { text-align: center; padding: 2rem 1.5rem; color: var(--gray-400); font-size: 0.82rem; border-top: 1px solid var(--gray-200); margin-top: 2rem; }
+
+    @media (max-width: 768px) {
+      .article-header { padding: 2rem 1rem 1.5rem; }
+      .article-header h1 { font-size: 1.6rem; }
+      .article-body { padding: 1.5rem 1rem 2rem; }
+      .article-body h2 { font-size: 1.3rem; }
+    }
+    @media (max-width: 480px) {
+      .article-header h1 { font-size: 1.3rem; }
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <a class="back" href="/frenchiepedia/">← Back to FrenchiePedia</a>
-    <h1>{post.data.title}</h1>
+  <div class="article-header">
+    <div class="article-header-inner">
+      <a class="back-link" href="/frenchiepedia/">← Back to FrenchiePedia</a>
+      <div class="article-tag">{tag}</div>
+      <h1>{post.data.title}</h1>
+      <div class="article-meta">
+        <span>{new Date(post.data.pubDate).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</span>
+        <span>·</span>
+        <span>{readingTime} min read</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="article-body">
     <Content />
   </div>
+
+  <div class="author-box" style="margin-bottom: 2rem;">
+    <div class="author-avatar">🐶</div>
+    <div class="author-info">
+      <h4>FrenchiePedia Editorial Team</h4>
+      <p>Expert-curated guides to help your French Bulldog live a healthier, happier life. We research so you don't have to.</p>
+    </div>
+  </div>
+
+  <div class="article-nav">
+    <a href="/frenchiepedia/">← Back to Home</a>
+    <a href="/frenchiepedia/#articles">All Articles →</a>
+  </div>
+
   <footer>
     <p>FrenchiePedia &copy; 2026 &mdash; French Bulldog Care Guide</p>
   </footer>

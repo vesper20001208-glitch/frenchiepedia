@@ -1,8 +1,16 @@
 ﻿---
-import FrenchMascot from '../components/FrenchMascot.astro';
 import { getCollection } from "astro:content";
 const posts = await getCollection("posts");
 posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const categories = [
+  { slug: "health", name: "Health & Wellness", desc: "Vet tips, common issues, prevention", icon: "❤️" },
+  { slug: "food", name: "Food & Nutrition", desc: "Best diets, feeding guides, supplements", icon: "🍖" },
+  { slug: "training", name: "Training & Behavior", desc: "Potty training, commands, socialization", icon: "🎯" },
+  { slug: "grooming", name: "Grooming & Care", desc: "Wrinkles, bathing, nail care", icon: "✨" },
+  { slug: "accessories", name: "Accessories & Gear", desc: "Harnesses, beds, toys, crates", icon: "🛍️" },
+  { slug: "lifestyle", name: "Lifestyle & Fun", desc: "Names, costs, personality, adoption", icon: "🐾" },
+];
 ---
 
 <!DOCTYPE html>
@@ -19,66 +27,206 @@ posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="icon" type="image/svg+xml" href="/frenchiepedia/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
   <style>
-    :root { --bg: #faf9f6; --fg: #1a1a2e; --accent: #c8a45c; --accent-light: #e8d5a3; --gray: #6b7280; --light-gray: #e5e7eb; --card-bg: #ffffff; --max-width: 800px; }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--fg); line-height: 1.7; font-size: 18px; }
-    header { background: linear-gradient(135deg, #1a1a2e, #16213e); color: white; padding: 3rem 1.5rem; text-align: center; }
-    header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
-    header p { color: var(--accent-light); font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
-    nav { margin-top: 1.5rem; display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; }
-    nav a { color: var(--accent); text-decoration: none; }
-    nav a:hover { color: white; }
-    main { max-width: var(--max-width); margin: 0 auto; padding: 2rem 1.5rem; }
-    .intro { margin-bottom: 3rem; }
-    .intro h2 { font-size: 1.8rem; margin-bottom: 1rem; color: #1a1a2e; }
-    .intro p { color: var(--gray); font-size: 1.05rem; line-height: 1.8; }
-    .section-title { font-size: 1.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--accent); }
-    .posts { display: grid; gap: 1.5rem; }
-    article { background: var(--card-bg); border-radius: 8px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.08); transition: transform 0.2s, box-shadow 0.2s; }
-    article:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    :root {
+      --bg: #faf9f6; --fg: #1a1a2e; --accent: #c8a45c; --accent-dark: #a8863a;
+      --accent-light: #f0e6c8; --gray-100: #f3f4f6; --gray-200: #e5e7eb;
+      --gray-400: #9ca3af; --gray-500: #6b7280; --gray-600: #4b5563;
+      --card-bg: #ffffff; --max-width: 1200px; --radius-md: 12px; --radius-lg: 16px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05); --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 30px rgba(0,0,0,0.12); --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: "Inter", system-ui, sans-serif; background: var(--bg); color: var(--fg); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+    /* Hero */
+    .hero {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #1a1a2e 100%);
+      text-align: center;
+      padding: 3.5rem 1.5rem 2.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: ""; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 25% 60%, rgba(200,164,92,0.1) 0%, transparent 50%),
+                  radial-gradient(ellipse at 75% 40%, rgba(200,164,92,0.06) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .hero-inner { max-width: 800px; margin: 0 auto; position: relative; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      background: rgba(200,164,92,0.15); border: 1px solid rgba(200,164,92,0.25);
+      border-radius: 100px; padding: 0.35rem 1rem;
+      font-size: 0.8rem; color: var(--accent-light); margin-bottom: 1.5rem;
+    }
+    .hero h1 {
+      font-family: "Playfair Display", serif;
+      font-size: 3.2rem; font-weight: 700;
+      color: white; line-height: 1.1; margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+    }
+    .hero h1 span {
+      background: linear-gradient(135deg, #f0e6c8, var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p { color: rgba(255,255,255,0.65); font-size: 1.1rem; max-width: 560px; margin: 0 auto 2rem; line-height: 1.6; }
+    .hero-cta {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: var(--accent); color: #1a1a2e; font-weight: 600;
+      padding: 0.75rem 1.75rem; border-radius: 100px; text-decoration: none;
+      font-size: 0.95rem; transition: all var(--transition);
+    }
+    .hero-cta:hover { background: #d4b06a; transform: translateY(-1px); box-shadow: 0 4px 15px rgba(200,164,92,0.3); }
+
+    /* Main content */
+    .content { max-width: var(--max-width); margin: 0 auto; padding: 2.5rem 1.5rem; }
+
+    /* Categories */
+    .categories { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 1rem; margin-bottom: 3.5rem; }
+    .cat-card {
+      background: var(--card-bg); border-radius: var(--radius-md); padding: 1.25rem;
+      text-align: center; text-decoration: none; color: var(--fg);
+      box-shadow: var(--shadow-sm); border: 1px solid var(--gray-200);
+      transition: all var(--transition);
+    }
+    .cat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--accent); }
+    .cat-icon { font-size: 1.8rem; margin-bottom: 0.5rem; }
+    .cat-card h3 { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.25rem; }
+    .cat-card p { font-size: 0.78rem; color: var(--gray-500); line-height: 1.4; }
+
+    /* Section title */
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+    .section-header h2 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.01em; }
+    .section-header h2::after { content: ""; display: block; width: 40px; height: 3px; background: var(--accent); border-radius: 2px; margin-top: 0.3rem; }
+
+    /* Article grid */
+    .posts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
+    article {
+      background: var(--card-bg); border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm); border: 1px solid var(--gray-200);
+      transition: all var(--transition); overflow: hidden;
+    }
+    article:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: transparent; }
+    .article-body { padding: 1.5rem; }
+    .article-meta {
+      display: flex; align-items: center; gap: 0.75rem;
+      font-size: 0.78rem; color: var(--gray-400); margin-bottom: 0.75rem;
+    }
+    .article-tag {
+      background: var(--accent-light); color: #8B6914;
+      padding: 0.15rem 0.6rem; border-radius: 100px; font-weight: 600; font-size: 0.72rem;
+    }
     article a { text-decoration: none; color: inherit; }
-    article h3 { font-size: 1.2rem; margin-bottom: 0.5rem; color: #1a1a2e; }
-    article p { color: var(--gray); font-size: 0.95rem; line-height: 1.6; }
-    .read-more { color: var(--accent); font-size: 0.85rem; margin-top: 0.5rem; display: inline-block; font-weight: 600; }
-    footer { text-align: center; padding: 2rem 1.5rem; color: var(--gray); font-size: 0.85rem; border-top: 1px solid var(--light-gray); margin-top: 3rem; }
-    @media (max-width: 640px) { body { font-size: 16px; } header { padding: 2rem 1rem; } header h1 { font-size: 1.8rem; } main { padding: 1.5rem 1rem; } }
+    article h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.6rem; line-height: 1.4; transition: color var(--transition); }
+    article a:hover h3 { color: var(--accent-dark); }
+    article p { color: var(--gray-500); font-size: 0.9rem; line-height: 1.6; }
+    .read-more { color: var(--accent-dark); font-size: 0.85rem; font-weight: 600; margin-top: 0.75rem; display: inline-flex; align-items: center; gap: 0.3rem; transition: gap var(--transition); }
+    article a:hover .read-more { gap: 0.5rem; }
+
+    /* Newsletter */
+    .newsletter {
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      border-radius: var(--radius-lg); padding: 2.5rem; text-align: center;
+      margin-top: 3rem; color: white;
+    }
+    .newsletter h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .newsletter p { color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+    footer { text-align: center; padding: 2rem 1.5rem; color: var(--gray-400); font-size: 0.82rem; border-top: 1px solid var(--gray-200); margin-top: 2rem; }
+
+    @media (max-width: 768px) {
+      .hero { padding: 2.5rem 1rem 2rem; }
+      .hero h1 { font-size: 2rem; }
+      .hero p { font-size: 1rem; }
+      .content { padding: 1.5rem 1rem; }
+      .posts-grid { grid-template-columns: 1fr; }
+      .categories { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+    }
+    @media (max-width: 480px) {
+      .hero h1 { font-size: 1.5rem; }
+    }
   </style>
 </head>
 <body>
-  <header>
-    <h1>FrenchiePedia</h1>
-    <p>Your complete guide to French Bulldog care, health, nutrition, training, and everything in between.</p>
-    <nav>
-      <a href="/frenchiepedia/">Home</a>
-    </nav>
-  </header>
-  <main>
-    <section class="intro">
-      <h2>Welcome to FrenchiePedia</h2>
-      <p>French Bulldogs are the most popular dog breed in America for a reason. They are affectionate, playful, and make wonderful companions. But they also come with unique needs. FrenchiePedia is here to help you give your Frenchie the best life possible.</p>
-    </section>
-    <section>
-      <h2 class="section-title">Latest Articles</h2>
-      <div class="posts">
-        {posts.map((post) => (
-          <article>
-            <a href={"/frenchiepedia/posts/" + post.id.replace(/.md$/, "") + "/"}>
-              <h3>{post.data.title}</h3>
-              <p>{post.data.description}</p>
-              <span class="read-more">Read more →</span>
-            </a>
-          </article>
-        ))}
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-badge">🐶 #1 Frenchie Resource</div>
+      <h1>Everything Your <span>French Bulldog</span> Needs</h1>
+      <p>Expert-backed guides on health, nutrition, training, and care — because your Frenchie deserves the best.</p>
+      <a href="#articles" class="hero-cta">Browse Articles →</a>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- Categories -->
+    <div class="categories">
+      {categories.map((cat) => (
+        <a href={"/frenchiepedia/" + (cat.slug === "lifestyle" ? "" : cat.slug)} class="cat-card">
+          <div class="cat-icon">{cat.icon}</div>
+          <h3>{cat.name}</h3>
+          <p>{cat.desc}</p>
+        </a>
+      ))}
+    </div>
+
+    <!-- Articles -->
+    <div id="articles">
+      <div class="section-header">
+        <h2>Latest Articles</h2>
+        <span style="font-size:0.85rem;color:var(--gray-400);">{posts.length} articles</span>
       </div>
-    </section>
-  </main>
+      <div class="posts-grid">
+        {posts.map((post) => {
+          const slug = post.id.replace(/.md$/, "");
+          const tag = slug.includes("health") ? "Health" :
+                      slug.includes("food") ? "Nutrition" :
+                      slug.includes("train") ? "Training" :
+                      slug.includes("groom") ? "Grooming" :
+                      slug.includes("price") || slug.includes("cost") ? "Cost" :
+                      slug.includes("name") ? "Lifestyle" :
+                      slug.includes("temperament") ? "Behavior" :
+                      slug.includes("lifespan") ? "Health" :
+                      slug.includes("adoption") ? "Lifestyle" : "Care";
+          return (
+            <article>
+              <a href={"/frenchiepedia/posts/" + slug + "/"}>
+                <div class="article-body">
+                  <div class="article-meta">
+                    <span class="article-tag">{tag}</span>
+                    <span>{new Date(post.data.pubDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
+                  </div>
+                  <h3>{post.data.title}</h3>
+                  <p>{post.data.description}</p>
+                  <span class="read-more">Read more →</span>
+                </div>
+              </a>
+            </article>
+          );
+        })}
+      </div>
+    </div>
+
+    <!-- Newsletter -->
+    <div class="newsletter">
+      <h3>🐾 Stay in the Know</h3>
+      <p>Get the latest Frenchie care tips delivered to your inbox.</p>
+      <p style="font-size:0.8rem;color:rgba(255,255,255,0.4);">Coming soon — subscribe feature in progress!</p>
+    </div>
+  </div>
+
   <footer>
-    <p>FrenchiePedia &copy; 2026 &mdash; The French Bulldog Care Guide</p>
-    <p style="margin-top: 0.5rem; font-size: 0.8rem;">We are a participant in the Amazon Services LLC Associates Program.</p>
+    <p>FrenchiePedia &copy; 2026 &mdash; The French Bulldog Care Guide &mdash; Built with ❤️ for Frenchie lovers everywhere</p>
   </footer>
-  <FrenchMascot />
+
+  <div id="frenchie-mascot"></div>
+  <script>
+    // Simple mascot placeholder - actual mascot is in BaseLayout
+  </script>
 </body>
 </html>
-
-
